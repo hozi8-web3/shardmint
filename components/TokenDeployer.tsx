@@ -288,34 +288,7 @@ export default function TokenDeployer({ isConnected, account }: TokenDeployerPro
         <DeploymentStatus progress={deploymentProgress} />
       )}
       
-      {/* Manual result display fallback */}
-      {!isDeploying && !deploymentResult && !deploymentError && (
-        <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <h3 className="text-lg font-semibold text-yellow-900 mb-2">
-            🎉 Token Deployed Successfully!
-          </h3>
-          <p className="text-yellow-800 mb-4">
-            Your token has been deployed but the result display is delayed. 
-            The deployment result has been saved and should appear automatically.
-          </p>
-          <button
-            onClick={() => {
-              const savedResult = localStorage.getItem('lastDeploymentResult')
-              if (savedResult) {
-                try {
-                  const parsedResult = JSON.parse(savedResult)
-                  setDeploymentResult(parsedResult)
-                } catch (error) {
-                  console.error('Error parsing saved result:', error)
-                }
-              }
-            }}
-            className="btn-primary"
-          >
-            🔄 Load Token Details
-          </button>
-        </div>
-      )}
+      {/* Manual result display fallback - REMOVED since results display immediately */}
     </div>
   )
 }
