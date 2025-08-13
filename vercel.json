@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "name": "shardmint",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "app/**/*.tsx": {
+      "maxDuration": 30
+    }
+  }
+}
