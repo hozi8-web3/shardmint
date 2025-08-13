@@ -35,7 +35,7 @@ Mint tokens on Shardeum - A complete full-stack dApp that allows users to create
 
 1. **Clone the repository**
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/hozi8-web3/shardmint
    cd shardmint
    ```
 
@@ -157,7 +157,7 @@ The dApp will automatically prompt you to add the network to MetaMask, or you ca
 
 4. **Deploy**
    - Vercel will automatically build and deploy
-   - Your dApp will be live at `https://your-project.vercel.app`
+   - Your dApp will be live at `https://shardmint.vercel.app`
 
 ### Manual Deployment
 
