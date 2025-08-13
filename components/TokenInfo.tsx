@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 
 interface TokenInfoProps {
   result: {
@@ -18,6 +18,11 @@ interface TokenInfoProps {
 
 export default function TokenInfo({ result, onDeployAnother }: TokenInfoProps) {
   const { contractAddress, transactionHash, tokenData } = result
+  
+  // Store deployment result in localStorage for persistence
+  useEffect(() => {
+    localStorage.setItem('lastDeploymentResult', JSON.stringify(result))
+  }, [result])
   
   const explorerUrl = `https://explorer-unstable.shardeum.org/address/${contractAddress}`
   const txUrl = `https://explorer-unstable.shardeum.org/tx/${transactionHash}`

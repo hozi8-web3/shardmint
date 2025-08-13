@@ -32,6 +32,21 @@ export default function TokenDeployer({ isConnected, account }: TokenDeployerPro
   const [deploymentError, setDeploymentError] = useState<string | null>(null)
   const [deploymentProgress, setDeploymentProgress] = useState<string>('')
 
+  // Check for existing deployment results on page load
+  useEffect(() => {
+    const savedResult = localStorage.getItem('lastDeploymentResult')
+    if (savedResult) {
+      try {
+        const parsedResult = JSON.parse(savedResult)
+        setDeploymentResult(parsedResult)
+        console.log('Retrieved saved deployment result:', parsedResult)
+      } catch (error) {
+        console.error('Error parsing saved deployment result:', error)
+        localStorage.removeItem('lastDeploymentResult')
+      }
+    }
+  }, [])
+
   const handleDeploy = async (tokenData: TokenData) => {
     if (!isConnected) {
       setDeploymentError('Please connect your wallet first')
@@ -145,12 +160,15 @@ export default function TokenDeployer({ isConnected, account }: TokenDeployerPro
           
           console.log('Transaction confirmed - showing result immediately:', result)
           
-          // Instant state update - no delays
+          // Show result immediately
           setDeploymentResult(result)
-          setIsDeploying(false)
-          setDeploymentProgress('')
+          setIsDeploying(false) // Stop loading immediately
+          setDeploymentProgress('') // Clear progress
           
-          // Save to localStorage
+          // Save to localStorage for persistence
+          localStorage.setItem('lastDeploymentResult', JSON.stringify(result))
+          
+          // Save to deployedTokens array
           const deployedTokens = JSON.parse(localStorage.getItem('deployedTokens') || '[]')
           deployedTokens.push(result)
           localStorage.setItem('deployedTokens', JSON.stringify(deployedTokens))
@@ -218,6 +236,7 @@ export default function TokenDeployer({ isConnected, account }: TokenDeployerPro
   const resetDeployment = () => {
     setDeploymentResult(null)
     setDeploymentError(null)
+    localStorage.removeItem('lastDeploymentResult') // Clear saved result
   }
 
   if (!isConnected) {
@@ -276,8 +295,25 @@ export default function TokenDeployer({ isConnected, account }: TokenDeployerPro
             🎉 Token Deployed Successfully!
           </h3>
           <p className="text-yellow-800 mb-4">
-            Your token has been deployed but the result display is delayed. Please refresh the page to see your token details.
+            Your token has been deployed but the result display is delayed. 
+            The deployment result has been saved and should appear automatically.
           </p>
+          <button
+            onClick={() => {
+              const savedResult = localStorage.getItem('lastDeploymentResult')
+              if (savedResult) {
+                try {
+                  const parsedResult = JSON.parse(savedResult)
+                  setDeploymentResult(parsedResult)
+                } catch (error) {
+                  console.error('Error parsing saved result:', error)
+                }
+              }
+            }}
+            className="btn-primary"
+          >
+            🔄 Load Token Details
+          </button>
         </div>
       )}
     </div>
