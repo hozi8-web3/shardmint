@@ -136,62 +136,6 @@ The dApp will automatically prompt you to add the network to MetaMask, or you ca
 - Verify token symbol and decimals
 - Click "Add Custom Token"
 
-## 🚀 Deployment
-
-### Vercel Deployment
-
-1. **Push to GitHub**
-   ```bash
-   git add .
-   git commit -m "Initial commit"
-   git push origin main
-   ```
-
-2. **Connect to Vercel**
-   - Go to [vercel.com](https://vercel.com)
-   - Import your GitHub repository
-   - Vercel will auto-detect Next.js settings
-
-3. **Environment Variables** (if needed)
-   - Add any required environment variables in Vercel dashboard
-
-4. **Deploy**
-   - Vercel will automatically build and deploy
-   - Your dApp will be live at `https://shardmint.vercel.app`
-
-### Manual Deployment
-
-1. **Build the project**
-   ```bash
-   npm run build
-   ```
-
-2. **Start production server**
-   ```bash
-   npm start
-   ```
-
-## 🔧 Configuration
-
-### Environment Variables
-Create a `.env.local` file for local development:
-
-```env
-# Hardhat (optional)
-PRIVATE_KEY=your_private_key_here
-
-# App configuration
-NEXT_PUBLIC_NETWORK_NAME=Shardeum Unstablenet
-NEXT_PUBLIC_RPC_URL=https://api-unstable.shardeum.org
-NEXT_PUBLIC_CHAIN_ID=8080
-NEXT_PUBLIC_EXPLORER_URL=https://explorer-unstable.shardeum.org
-```
-
-### Customization
-- **Colors**: Modify `tailwind.config.js`
-- **Contract**: Edit `contracts/CustomToken.sol`
-- **Styling**: Update `app/globals.css`
-
 ## 📁 Project Structure
 
  ```
@@ -221,20 +165,6 @@ NEXT_PUBLIC_EXPLORER_URL=https://explorer-unstable.shardeum.org
 ├── package.json            # Dependencies and scripts
 ├── vercel.json             # Vercel deployment config
 └── README.md               # This file
-```
-
-## 🧪 Testing
-
-### Local Testing
-```bash
-# Start local Hardhat node
-npx hardhat node
-
-# Deploy to local network
-npx hardhat run scripts/deploy.js --network localhost
-
-# Run tests
-npx hardhat test
 ```
 
 ### Testnet Testing
