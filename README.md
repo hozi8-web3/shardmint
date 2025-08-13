@@ -1,4 +1,6 @@
-![ShardMint Logo](public/logo-large.svg)
+<p align="center">
+  <img src="public/logo-large.svg" alt="ShardMint Logo" width="200" />
+</p>
 
 Mint tokens on Shardeum - A complete full-stack dApp that allows users to create and deploy their own ERC-20 tokens on the **Shardeum Unstablenet** (Smart Contract Testnet) with just a few clicks!
 
