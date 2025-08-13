@@ -88,7 +88,7 @@ export default function TokenInfo({ result, onDeployAnother }: TokenInfoProps) {
         try {
           const wasAdded = await window.ethereum.request({
             method: 'wallet_watchAsset',
-            params: {
+            params: [{
               type: 'ERC20',
               options: {
                 address: checksummedAddress,
@@ -96,7 +96,7 @@ export default function TokenInfo({ result, onDeployAnother }: TokenInfoProps) {
                 decimals: parseInt(decimals.toString()),
                 image: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png'
               },
-            },
+            }],
           })
           
           if (wasAdded) {
