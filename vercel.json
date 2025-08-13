@@ -1,21 +1,4 @@
 {
   "version": 2,
-  "name": "shardmint",
-  "buildCommand": "npm run build",
-  "outputDirectory": ".next",
-  "installCommand": "npm install",
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/"
-    }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  },
-  "functions": {
-    "app/**/*.tsx": {
-      "maxDuration": 30
-    }
-  }
+  "name": "shardmint"
 }

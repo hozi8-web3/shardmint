@@ -1,5 +1,7 @@
 'use client'
 
+import React from 'react'
+
 export default function DeploymentStatus() {
   return (
     <div className="card mt-6">

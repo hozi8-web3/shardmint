@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   icons: {
     icon: '/favicon.svg',
     shortcut: '/favicon.svg',
-    apple: '/apple-touch-icon.svg',
+    apple: '/logo-large.svg',
   },
   manifest: '/manifest.json',
   openGraph: {
@@ -52,6 +52,9 @@ export default function RootLayout({
             .rounded-xl { border-radius: 0.75rem; }
             .shadow-xl { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
             .p-6 { padding: 1.5rem; }
+            .bg-gradient-to-br { background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%); }
+            .from-blue-50 { background-color: #eff6ff; }
+            .to-indigo-100 { background-color: #e0e7ff; }
           `
         }} />
       </head>
