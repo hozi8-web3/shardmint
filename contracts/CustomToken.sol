@@ -6,12 +6,10 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @title CustomToken
- * @dev ERC20 token contract that mints all tokens to the deployer
+ * @dev Optimized ERC20 token contract that mints all tokens to the deployer
  * @custom:dev-run-script scripts/deploy.js
  */
 contract CustomToken is ERC20, Ownable {
-    uint8 private _decimals;
-
     /**
      * @dev Constructor that gives msg.sender all of existing tokens.
      * @param name The name of the token
@@ -25,15 +23,8 @@ contract CustomToken is ERC20, Ownable {
         uint256 totalSupply,
         uint8 decimals_
     ) ERC20(name, symbol) Ownable(msg.sender) {
-        _decimals = decimals_;
         _mint(msg.sender, totalSupply * (10 ** decimals_));
-    }
-
-    /**
-     * @dev Returns the number of decimals used to get its user representation.
-     */
-    function decimals() public view virtual override returns (uint8) {
-        return _decimals;
+        _decimals = decimals_;
     }
 
     /**

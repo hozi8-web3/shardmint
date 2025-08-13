@@ -134,8 +134,8 @@ export default function TokenForm({ onDeploy, isDeploying }: TokenFormProps) {
           <div className="text-left">
             <h3 className="font-semibold text-orange-900 mb-2">Understanding Token Decimals</h3>
             <p className="text-orange-800 text-sm mb-2">
-              <strong>Important:</strong> The total supply you enter will be multiplied by $10^{formData.decimals}$ internally to get the raw value (wei units). 
-              This raw value is what's stored on the blockchain.
+            <strong>Important:</strong> The total supply you enter will be multiplied by 10<sup>{formData.decimals}</sup> internally to get the raw value (wei units). 
+            This raw value is what's stored on the blockchain.
             </p>
             <p className="text-orange-800 text-sm">
               <strong>💡 Tip:</strong> Use the calculator below to see exactly how many wei units will be minted and how your wallet will display it.

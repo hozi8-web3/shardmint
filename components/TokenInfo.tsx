@@ -31,25 +31,156 @@ export default function TokenInfo({ result, onDeployAnother }: TokenInfoProps) {
   const addTokenToMetaMask = async (address: string, symbol: string, decimals: number) => {
     if (typeof window !== 'undefined' && window.ethereum) {
       try {
-        await window.ethereum.request({
-          method: 'wallet_watchAsset',
-          params: [{
-            type: 'ERC20',
-            options: {
-              address: address,
-              symbol: symbol,
-              decimals: decimals,
-              image: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png' // Generic token icon
+        console.log('Adding token to MetaMask:', { address, symbol, decimals })
+        
+        // Validate parameters
+        if (!address || !symbol || decimals === undefined) {
+          throw new Error('Invalid token parameters')
+        }
+        
+        // Check if user is on the correct network (Shardeum Unstablenet)
+        const chainId = await window.ethereum.request({ method: 'eth_chainId' })
+        if (chainId !== '0x1f90') { // 8080 in hex
+          // Try to switch to the correct network first
+          try {
+            await window.ethereum.request({
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId: '0x1f90' }]
+            })
+            console.log('Successfully switched to Shardeum Unstablenet')
+          } catch (switchError: any) {
+            if (switchError.code === 4902) {
+              // Chain not added, try to add it
+              try {
+                await window.ethereum.request({
+                  method: 'wallet_addEthereumChain',
+                  params: [{
+                    chainId: '0x1f90',
+                    chainName: 'Shardeum Unstablenet',
+                    nativeCurrency: {
+                      name: 'SHM',
+                      symbol: 'SHM',
+                      decimals: 18
+                    },
+                    rpcUrls: ['https://api-unstable.shardeum.org'],
+                    blockExplorerUrls: ['https://explorer-unstable.shardeum.org']
+                  }]
+                })
+                console.log('Successfully added Shardeum Unstablenet')
+              } catch (addError: any) {
+                console.error('Failed to add network:', addError)
+                alert('⚠️ Please manually switch to Shardeum Unstablenet (Chain ID: 8080) before adding the token to MetaMask.')
+                return
+              }
+            } else {
+              console.error('Failed to switch network:', switchError)
+              alert('⚠️ Please manually switch to Shardeum Unstablenet (Chain ID: 8080) before adding the token to MetaMask.')
+              return
             }
-          }]
-        })
-        alert('Token added to MetaMask successfully! Check your wallet.')
-      } catch (error) {
+          }
+        }
+        
+        // Ensure address is checksummed
+        const { ethers } = await import('ethers')
+        const checksummedAddress = ethers.getAddress(address)
+        
+        // Use the correct MetaMask API format
+        try {
+          const wasAdded = await window.ethereum.request({
+            method: 'wallet_watchAsset',
+            params: {
+              type: 'ERC20',
+              options: {
+                address: checksummedAddress,
+                symbol: symbol.toUpperCase(),
+                decimals: parseInt(decimals.toString()),
+                image: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png'
+              },
+            },
+          })
+          
+          if (wasAdded) {
+            console.log('Token added successfully!')
+            alert('✅ Token added to MetaMask successfully! Check your wallet.')
+            
+            // Also try to refresh the page to trigger MetaMask to show the token
+            setTimeout(() => {
+              window.location.reload()
+            }, 2000)
+          } else {
+            console.log('Token was not added')
+            alert('⚠️ Token was not added to MetaMask. Please try again or add manually.')
+          }
+          
+        } catch (watchAssetError: any) {
+          console.error('wallet_watchAsset failed:', watchAssetError)
+          
+          // Try the legacy method as fallback
+          try {
+            const legacyResult = await window.ethereum.request({
+              method: 'wallet_addEthereumToken',
+              params: [{
+                type: 'ERC20',
+                options: {
+                  address: checksummedAddress,
+                  symbol: symbol.toUpperCase(),
+                  decimals: parseInt(decimals.toString())
+                }
+              }]
+            })
+            
+            console.log('Legacy method response:', legacyResult)
+            alert('✅ Token added to MetaMask successfully using legacy method! Check your wallet.')
+            
+            setTimeout(() => {
+              window.location.reload()
+            }, 2000)
+            
+          } catch (legacyError: any) {
+            console.error('All methods failed:', { watchAssetError, legacyError })
+            throw new Error('All MetaMask token addition methods failed')
+          }
+        }
+        
+      } catch (error: any) {
         console.error('Error adding token to MetaMask:', error)
-        alert('Failed to add token to MetaMask. Please add it manually using the contract address.')
+        console.error('Error details:', {
+          message: error.message,
+          code: error.code,
+          stack: error.stack,
+          data: error.data
+        })
+        
+        // Provide specific error messages and solutions
+        let errorMessage = 'Failed to add token to MetaMask.\n\n'
+        
+        if (error.code === 4001) {
+          errorMessage += '❌ User rejected the request.\n\n'
+        } else if (error.code === -32602) {
+          errorMessage += '❌ Invalid parameters.\n\n'
+        } else if (error.message) {
+          errorMessage += `❌ Error: ${error.message}\n\n`
+        } else {
+          errorMessage += '❌ Unknown error occurred.\n\n'
+        }
+        
+        errorMessage += '📋 Please add it manually:\n'
+        errorMessage += '1. Open MetaMask\n'
+        errorMessage += '2. Click "Import tokens"\n'
+        errorMessage += '3. Paste this address: ' + address + '\n'
+        errorMessage += '4. Click "Add Custom Token"\n'
+        errorMessage += '5. Verify symbol: ' + symbol + ' and decimals: ' + decimals + '\n'
+        errorMessage += '6. Click "Import Tokens"\n\n'
+        errorMessage += '🔍 Debug Info:\n'
+        errorMessage += 'Address: ' + address + '\n'
+        errorMessage += 'Symbol: ' + symbol + '\n'
+        errorMessage += 'Decimals: ' + decimals + '\n'
+        errorMessage += 'Network: Shardeum Unstablenet (Chain ID: 8080)'
+        
+        alert(errorMessage)
       }
     } else {
-      alert('MetaMask not detected. Please install MetaMask to use this feature.')
+      alert('❌ MetaMask not detected. Please install MetaMask to use this feature.')
     }
   }
 

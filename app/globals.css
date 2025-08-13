@@ -90,3 +90,16 @@
 .p-6 {
   padding: 1.5rem;
 }
+
+/* Critical CSS for layout */
+.bg-gradient-to-br {
+  background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%);
+}
+
+.from-blue-50 {
+  background-color: #eff6ff;
+}
+
+.to-indigo-100 {
+  background-color: #e0e7ff;
+}
