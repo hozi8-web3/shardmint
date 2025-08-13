@@ -27,7 +27,7 @@ Mint tokens on Shardeum - A complete full-stack dApp that allows users to create
 
 - Node.js 18+ 
 - MetaMask wallet extension
-- Some SHM testnet tokens (get from [Shardeum Faucet](https://faucet.shardeum.org))
+- Some SHM testnet tokens (get from [Shardeum Faucet](https://docs.shardeum.org/docs/developer/faucet))
 
 ### Local Development
 
@@ -236,7 +236,7 @@ npx hardhat test
 ```
 
 ### Testnet Testing
-1. Get testnet SHM from [Shardeum Faucet](https://faucet.shardeum.org)
+1. Get testnet SHM from [Shardeum Faucet](https://docs.shardeum.org/docs/developer/faucet)
 2. Connect MetaMask to Shardeum Unstablenet
 3. Deploy test tokens
 4. Verify on [Shardeum Explorer](https://explorer-unstable.shardeum.org)
@@ -309,8 +309,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/your-username/deploy-a-token-wizard/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-username/deploy-a-token-wizard/discussions)
+- **Issues**: [GitHub Issues](https://github.com/hozi8-web3/shardmint/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/hozi8-web3/shardmint/discussions)
 - **Documentation**: [Shardeum Docs](https://docs.shardeum.org)
 
 ---
