@@ -1,6 +1,9 @@
 {
   "version": 2,
   "name": "shardmint",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "installCommand": "npm install",
   "routes": [
     {
       "src": "/(.*)",

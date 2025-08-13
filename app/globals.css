@@ -6,6 +6,13 @@
   html {
     font-family: Inter, system-ui, sans-serif;
   }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%);
+    min-height: 100vh;
+  }
 }
 
 @layer components {
@@ -24,4 +31,62 @@
   .card {
     @apply bg-white rounded-xl shadow-xl p-6 border border-gray-100;
   }
+}
+
+/* Fallback styles in case Tailwind fails */
+.min-h-screen {
+  min-height: 100vh;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mb-12 {
+  margin-bottom: 3rem;
+}
+
+.bg-white {
+  background-color: white;
+}
+
+.rounded-xl {
+  border-radius: 0.75rem;
+}
+
+.shadow-xl {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.p-6 {
+  padding: 1.5rem;
 }
