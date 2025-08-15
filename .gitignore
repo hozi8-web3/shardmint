@@ -12,7 +12,6 @@ dist/
 
 # Hardhat
 cache/
-artifacts/
 typechain/
 typechain-types/
 
