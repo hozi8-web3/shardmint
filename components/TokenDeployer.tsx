@@ -255,18 +255,20 @@ export default function TokenDeployer({ isConnected, account }: TokenDeployerPro
 
   if (!isConnected) {
     return (
-      <div className="card max-w-md mx-auto text-center">
-        <div className="text-6xl mb-4">🔒</div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          Connect Your Wallet
-        </h2>
-        <p className="text-gray-600 mb-6">
-          Please connect your MetaMask wallet to start deploying tokens
-        </p>
-        <div className="p-4 bg-blue-50 rounded-lg">
-          <p className="text-sm text-blue-800">
-            <strong>Network:</strong> Shardeum Unstablenet (Chain ID: 8080)
+      <div className="max-w-4xl mx-auto">
+        <div className="card text-center">
+          <div className="text-6xl mb-4">🔒</div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Connect Your Wallet
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Please connect your MetaMask wallet to start deploying tokens
           </p>
+          <div className="p-4 bg-blue-50 rounded-lg">
+            <p className="text-sm text-blue-800">
+              <strong>Network:</strong> Shardeum Unstablenet (Chain ID: 8080)
+            </p>
+          </div>
         </div>
       </div>
     )
@@ -291,7 +293,7 @@ export default function TokenDeployer({ isConnected, account }: TokenDeployerPro
       />
       
       {deploymentError && (
-        <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+        <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg max-w-4xl mx-auto">
           <p className="text-red-800">
             <strong>Error:</strong> {deploymentError}
           </p>
@@ -299,7 +301,9 @@ export default function TokenDeployer({ isConnected, account }: TokenDeployerPro
       )}
       
       {isDeploying && (
-        <DeploymentStatus progress={deploymentProgress} />
+        <div className="max-w-4xl mx-auto">
+          <DeploymentStatus progress={deploymentProgress} />
+        </div>
       )}
       
       {/* Manual result display fallback - REMOVED since results display immediately */}
