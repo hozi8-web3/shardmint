@@ -1,5 +1,5 @@
 'use client'
-
+import CustomTokenArtifact from "../artifacts/contracts/CustomToken.sol/CustomToken.json";
 import { useState, useEffect } from 'react'
 import TokenForm from './TokenForm'
 import DeploymentStatus from './DeploymentStatus'
@@ -13,7 +13,8 @@ interface TokenDeployerProps {
 interface TokenData {
   name: string
   symbol: string
-  totalSupply: string
+  initialSupply: string
+  maxSupply: string
   decimals: number
   logo: string
   description: string
@@ -78,23 +79,28 @@ export default function TokenDeployer({ isConnected, account }: TokenDeployerPro
 
       setDeploymentProgress('Loading contract data...')
       
-      // Import the contract ABI and bytecode
-      const [tokenABI, tokenBytecode] = await Promise.all([
-        import('../contracts/TokenABI.json'),
-        import('../contracts/TokenBytecode.js')
-      ])
+      // Import the contract ABI
+      const tokenABI = await import('../contracts/TokenABI.json')
       
       setDeploymentProgress('Creating contract factory...')
       
-      // Create contract factory
-      const CustomToken = new ethers.ContractFactory(
-        tokenABI.default,
-        tokenBytecode.TOKEN_BYTECODE,
+      // Create contract factory using the ABI and bytecode
+      const CustomTokenFactory = new ethers.ContractFactory(
+        CustomTokenArtifact.abi,
+        CustomTokenArtifact.bytecode,
         signer
-      )
+      );
 
-      // Calculate total supply
-      const totalSupply = ethers.parseUnits(tokenData.totalSupply, tokenData.decimals)
+
+      // This ensures the contract receives the correct raw amount
+      // Calculate initial and max supply using parseUnits
+      const initialSupply = tokenData.decimals === 18 
+        ? ethers.parseEther(tokenData.initialSupply)
+        : ethers.parseUnits(tokenData.initialSupply, tokenData.decimals)
+        
+      const maxSupply = tokenData.decimals === 18 
+        ? ethers.parseEther(tokenData.maxSupply)
+        : ethers.parseUnits(tokenData.maxSupply, tokenData.decimals)
       
       setDeploymentProgress('Estimating gas and deploying...')
       
@@ -103,21 +109,26 @@ export default function TokenDeployer({ isConnected, account }: TokenDeployerPro
       const gasPrice = feeData.gasPrice
       
       // AGGRESSIVE gas optimization for maximum speed
-      const gasLimit = 1000000 // Further reduced for faster processing
+      const gasLimit = 3000000 // Increased for contract deployment
       // Use higher gas price for instant inclusion (50% higher)
       const aggressiveGasPrice = gasPrice ? gasPrice : undefined
       
       // Deploy with aggressive gas settings for maximum speed
-      const contract = await CustomToken.deploy(
-        tokenData.name,
-        tokenData.symbol,
-        totalSupply,
-        tokenData.decimals,
+      // Deploy with all required parameters matching contract constructor
+      const contract = await CustomTokenFactory.deploy(
+        tokenData.name,           // name_
+        tokenData.symbol,         // symbol_ 
+        tokenData.decimals,       // decimals_
+        initialSupply,            // initialSupply_
+        maxSupply,                // maxSupply_
+        tokenData.logo,           // logoUrl_
+        tokenData.description,    // description_
         {
           gasLimit: gasLimit,
           gasPrice: aggressiveGasPrice,
         }
-      )
+      );
+
       
       setDeploymentProgress('Transaction sent! Waiting for confirmation...')
       
@@ -172,6 +183,9 @@ export default function TokenDeployer({ isConnected, account }: TokenDeployerPro
           const deployedTokens = JSON.parse(localStorage.getItem('deployedTokens') || '[]')
           deployedTokens.push(result)
           localStorage.setItem('deployedTokens', JSON.stringify(deployedTokens))
+          
+          // Also save to lastDeploymentResult for immediate display
+          localStorage.setItem('lastDeploymentResult', JSON.stringify(result))
           
           // Clear timeout since deployment succeeded
           clearTimeout(deploymentTimeout)
@@ -262,7 +276,7 @@ export default function TokenDeployer({ isConnected, account }: TokenDeployerPro
     return (
       <div className="max-w-4xl mx-auto">
         <TokenInfo 
-          result={deploymentResult}
+          result={{ ...deploymentResult, tokenData: { ...deploymentResult.tokenData, totalSupply: deploymentResult.tokenData.initialSupply } }}
           onDeployAnother={resetDeployment}
         />
       </div>
@@ -270,7 +284,7 @@ export default function TokenDeployer({ isConnected, account }: TokenDeployerPro
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-4xl mx-auto">
       <TokenForm 
         onDeploy={handleDeploy}
         isDeploying={isDeploying}

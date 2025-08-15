@@ -68,6 +68,9 @@ export default function DeploymentStatus({ progress }: DeploymentStatusProps) {
           <p className="text-sm text-green-800">
             <strong>🚀 Aggressive Speed Optimization:</strong> Using 50% higher gas price and reduced gas limit for instant deployment on Shardeum
           </p>
+          <p className="text-sm text-green-800 mt-2">
+            <strong>🔧 Accurate Decimal Handling:</strong> Using ethers.parseUnits() to ensure your wallet displays exactly the token amount you specified
+          </p>
         </div>
         
         <div className="mt-4 p-4 bg-yellow-50 rounded-lg">

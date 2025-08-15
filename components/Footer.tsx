@@ -56,6 +56,7 @@ export default function Footer() {
               <p><strong>Chain ID:</strong> 8080</p>
               <p><strong>RPC URL:</strong> api-unstable.shardeum.org</p>
               <p><strong>Currency:</strong> SHM</p>
+              <p><strong>Token Format:</strong> Uses ethers.parseUnits() for accurate decimal handling</p>
             </div>
           </div>
         </div>

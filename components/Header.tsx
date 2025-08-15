@@ -84,7 +84,7 @@ export default function Header({ isConnected, account, onConnect }: HeaderProps)
                 Shardeum Unstablenet
               </span>
               <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-                ⚡ Legacy Format
+              ⚡ Legacy Format
               </span>
             </div>
           </div>

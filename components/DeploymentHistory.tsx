@@ -89,6 +89,9 @@ export default function DeploymentHistory() {
                 <div>
                   <span className="text-gray-500">Supply:</span>{' '}
                   {parseInt(token.tokenData.totalSupply).toLocaleString()} {token.tokenData.symbol}
+                  <span className="text-xs text-gray-400 block">
+                    (Displayed exactly as entered)
+                  </span>
                 </div>
                 <div>
                   <span className="text-gray-500">Decimals:</span> {token.tokenData.decimals}

@@ -6,7 +6,8 @@ interface TokenFormProps {
   onDeploy: (tokenData: {
     name: string
     symbol: string
-    totalSupply: string
+    initialSupply: string
+    maxSupply: string
     decimals: number
     logo: string
     description: string
@@ -18,7 +19,8 @@ export default function TokenForm({ onDeploy, isDeploying }: TokenFormProps) {
   const [formData, setFormData] = useState({
     name: '',
     symbol: '',
-    totalSupply: '1000000',
+    initialSupply: '1000000',
+    maxSupply: '10000000',
     decimals: 18,
     logo: '',
     description: ''
@@ -41,8 +43,16 @@ export default function TokenForm({ onDeploy, isDeploying }: TokenFormProps) {
       newErrors.symbol = 'Token symbol must be less than 10 characters'
     }
 
-    if (!formData.totalSupply || parseFloat(formData.totalSupply) <= 0) {
-      newErrors.totalSupply = 'Total supply must be greater than 0'
+    if (!formData.initialSupply || parseFloat(formData.initialSupply) <= 0) {
+      newErrors.initialSupply = 'Initial supply must be greater than 0'
+    }
+
+    if (!formData.maxSupply || parseFloat(formData.maxSupply) <= 0) {
+      newErrors.maxSupply = 'Max supply must be greater than 0'
+    }
+
+    if (parseFloat(formData.maxSupply) < parseFloat(formData.initialSupply)) {
+      newErrors.maxSupply = 'Max supply must be greater than or equal to initial supply'
     }
 
     if (formData.decimals < 0 || formData.decimals > 18) {
@@ -87,37 +97,8 @@ export default function TokenForm({ onDeploy, isDeploying }: TokenFormProps) {
     }
   }
 
-  // Calculate the wei units for display
-  const calculateWeiUnits = () => {
-    const supplyString = formData.totalSupply;
-    const decimals = formData.decimals;
-
-    try {
-      if (!supplyString || parseFloat(supplyString) <= 0 || isNaN(parseFloat(supplyString))) {
-        return "0";
-      }
-
-      // Convert the string total supply to BigInt directly to avoid floating point issues.
-      // Assuming totalSupply is always an integer string due to input type="number" and step="1".
-      let rawWei = BigInt(supplyString); 
-      const multiplier = BigInt(Math.pow(10, decimals));
-      rawWei = rawWei * multiplier;
-      
-      return rawWei.toString();
-    } catch (e) {
-      console.error("Error calculating wei units with BigInt:", e);
-      // Fallback in case BigInt conversion fails (e.g., if supplyString somehow contains decimals)
-      const supply = parseFloat(supplyString);
-      // Use BigInt conversion on the floored value for safety in fallback as well
-      return (BigInt(Math.floor(supply)) * BigInt(Math.pow(10, decimals))).toString();
-    }
-  };
-
-  const weiUnits = calculateWeiUnits();
-
-
   return (
-    <div className="card">
+    <div className="w-full bg-white rounded-xl shadow-lg p-8">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
           Create Your Token
@@ -127,24 +108,26 @@ export default function TokenForm({ onDeploy, isDeploying }: TokenFormProps) {
         </p>
       </div>
 
-      {/* Decimals Warning */}
-      <div className="mb-6 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+      {/* Contract Information */}
+      <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
         <div className="flex items-start space-x-3">
-          <div className="text-orange-600 text-xl">💡</div>
+          <div className="text-blue-600 text-xl">ℹ️</div>
           <div className="text-left">
-            <h3 className="font-semibold text-orange-900 mb-2">Understanding Token Decimals</h3>
-            <p className="text-orange-800 text-sm mb-2">
-            <strong>Important:</strong> The total supply you enter will be multiplied by 10<sup>{formData.decimals}</sup> internally to get the raw value (wei units). 
-            This raw value is what's stored on the blockchain.
+            <h3 className="font-semibold text-blue-900 mb-2">Contract Features</h3>
+            <p className="text-blue-800 text-sm mb-2">
+              <strong>✅ ERC20Capped:</strong> Your token will have a maximum supply limit that cannot be exceeded.
             </p>
-            <p className="text-orange-800 text-sm">
-              <strong>💡 Tip:</strong> Use the calculator below to see exactly how many wei units will be minted and how your wallet will display it.
+            <p className="text-blue-800 text-sm mb-2">
+              <strong>✅ Ownable:</strong> Only you (the deployer) can mint additional tokens up to the max supply.
+            </p>
+            <p className="text-blue-800 text-sm">
+              <strong>✅ Custom Metadata:</strong> Includes logo URL and description stored on-chain.
             </p>
           </div>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-6">
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
             Token Name *
@@ -154,13 +137,16 @@ export default function TokenForm({ onDeploy, isDeploying }: TokenFormProps) {
             id="name"
             value={formData.name}
             onChange={(e) => handleInputChange('name', e.target.value)}
-            className={`input-field ${errors.name ? 'border-red-500' : ''}`}
+            className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${errors.name ? 'border-red-500' : ''}`}
             placeholder="e.g., My Awesome Token"
             disabled={isDeploying}
           />
           {errors.name && (
             <p className="mt-1 text-sm text-red-600">{errors.name}</p>
           )}
+          <p className="mt-1 text-sm text-gray-500">
+            This will be the full name of your token (e.g., "Ethereum", "Chainlink")
+          </p>
         </div>
 
         <div>
@@ -172,102 +158,15 @@ export default function TokenForm({ onDeploy, isDeploying }: TokenFormProps) {
             id="symbol"
             value={formData.symbol}
             onChange={(e) => handleInputChange('symbol', e.target.value.toUpperCase())}
-            className={`input-field ${errors.symbol ? 'border-red-500' : ''}`}
+            className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${errors.symbol ? 'border-red-500' : ''}`}
             placeholder="e.g., MAT"
             disabled={isDeploying}
           />
           {errors.symbol && (
             <p className="mt-1 text-sm text-red-600">{errors.symbol}</p>
           )}
-        </div>
-
-        <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-            Token Description
-          </label>
-          <textarea
-            id="description"
-            value={formData.description}
-            onChange={(e) => handleInputChange('description', e.target.value)}
-            className={`input-field ${errors.description ? 'border-red-500' : ''}`}
-            placeholder="Describe your token's purpose, utility, or vision..."
-            rows={3}
-            disabled={isDeploying}
-          />
-          {errors.description && (
-            <p className="mt-1 text-sm text-red-600">{errors.description}</p>
-          )}
           <p className="mt-1 text-sm text-gray-500">
-            Optional: Help users understand what your token is for
-          </p>
-        </div>
-
-        <div>
-          <label htmlFor="logo" className="block text-sm font-medium text-gray-700 mb-2">
-            Token Logo URL
-          </label>
-          <input
-            type="url"
-            id="logo"
-            value={formData.logo}
-            onChange={(e) => handleInputChange('logo', e.target.value)}
-            className={`input-field ${errors.logo ? 'border-red-500' : ''}`}
-            placeholder="https://example.com/logo.png"
-            disabled={isDeploying}
-          />
-          {errors.logo && (
-            <p className="mt-1 text-sm text-red-600">{errors.logo}</p>
-          )}
-          <p className="mt-1 text-sm text-gray-500">
-            Optional: Direct link to your token's logo image (PNG, JPG, SVG)
-          </p>
-        </div>
-
-        <div>
-          <label htmlFor="totalSupply" className="block text-sm font-medium text-gray-700 mb-2">
-            Total Supply *
-          </label>
-          <input
-            type="number"
-            id="totalSupply"
-            value={formData.totalSupply}
-            onChange={(e) => handleInputChange('totalSupply', e.target.value)}
-            className={`input-field ${errors.totalSupply ? 'border-red-500' : ''}`}
-            placeholder="1000000"
-            min="1"
-            step="1"
-            disabled={isDeploying}
-          />
-          {errors.totalSupply && (
-            <p className="mt-1 text-sm text-red-600">{errors.totalSupply}</p>
-          )}
-          
-          {/* Supply Calculator */}
-          <div className="mt-2 p-3 bg-gray-50 rounded-lg">
-            <p className="text-sm text-gray-700 mb-2">
-              <strong>Supply Calculator:</strong> With {formData.decimals} decimals, you'll get:
-            </p>
-            <div className="text-sm font-mono bg-white p-2 rounded border">
-              {formData.totalSupply && parseFloat(formData.totalSupply) > 0 ? (
-                <>
-                  <div className="text-green-600">
-                    {parseFloat(formData.totalSupply).toLocaleString()} tokens
-                  </div>
-                  <div className="text-gray-500 text-xs">
-                    = {weiUnits} wei units (raw blockchain value)
-                  </div>
-                  <div className="text-blue-600 text-xs mt-1">
-                    💡 Once added to MetaMask, it will display: {parseFloat(formData.totalSupply).toLocaleString()} tokens
-                  </div>
-                </>
-              ) : (
-                <span className="text-gray-400">Enter a total supply to see calculation</span>
-              )}
-            </div>
-          </div>
-          
-          <p className="mt-2 text-sm text-gray-500">
-            This will be the total number of tokens minted to your address
+            Short ticker symbol for your token (e.g., "ETH", "LINK", "UNI")
           </p>
         </div>
 
@@ -279,7 +178,7 @@ export default function TokenForm({ onDeploy, isDeploying }: TokenFormProps) {
             id="decimals"
             value={formData.decimals}
             onChange={(e) => handleInputChange('decimals', parseInt(e.target.value))}
-            className={`input-field ${errors.decimals ? 'border-red-500' : ''}`}
+            className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${errors.decimals ? 'border-red-500' : ''}`}
             disabled={isDeploying}
           >
             <option value={0}>0 (Whole numbers only)</option>
@@ -292,26 +191,129 @@ export default function TokenForm({ onDeploy, isDeploying }: TokenFormProps) {
           )}
           
           {/* Decimals Explanation */}
-          <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <p className="text-sm text-yellow-800 mb-2">
-              <strong>⚠️ Important:</strong> Decimals determine token precision
+          <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+            <p className="text-sm text-green-800 mb-2">
+              <strong>How decimals work:</strong>
             </p>
-            <ul className="text-xs text-yellow-700 space-y-1">
-              <li>• <strong>0 decimals:</strong> 1 token = 1 unit (like Bitcoin)</li>
-              <li>• <strong>6 decimals:</strong> 1 token = 1,000,000 units (like USDC)</li>
-              <li>• <strong>18 decimals:</strong> 1 token = 1,000,000,000,000,000,000 units (like ETH)</li>
+            <ul className="text-xs text-green-700 space-y-1">
+              <li>• <strong>18 decimals:</strong> Standard for most ERC-20 tokens (supports fractional amounts like 1.5 tokens)</li>
+              <li>• <strong>6 decimals:</strong> Common for stablecoins (supports amounts like 1.000001)</li>
+              <li>• <strong>0 decimals:</strong> Whole numbers only (1, 2, 3... no fractions)</li>
             </ul>
-            <p className="text-xs text-yellow-700 mt-2">
-              <strong>💡 Tip:</strong> Lower decimals = simpler numbers, Higher decimals = more precision
-            </p>
           </div>
+        </div>
+
+        <div>
+          <label htmlFor="initialSupply" className="block text-sm font-medium text-gray-700 mb-2">
+            Initial Supply *
+          </label>
+          <input
+            type="number"
+            id="initialSupply"
+            value={formData.initialSupply}
+            onChange={(e) => handleInputChange('initialSupply', e.target.value)}
+            className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${errors.initialSupply ? 'border-red-500' : ''}`}
+            placeholder="1000000"
+            min="1"
+            step="1"
+            disabled={isDeploying}
+          />
+          {errors.initialSupply && (
+            <p className="mt-1 text-sm text-red-600">{errors.initialSupply}</p>
+          )}
+
+          {/* Initial Supply Calculator */}
+          <div className="mt-2 p-3 bg-green-50 rounded-lg">
+            <p className="text-sm text-green-700 mb-2">
+              <strong>Initial tokens minted to your wallet:</strong>
+            </p>
+            <div className="text-sm font-mono bg-white p-2 rounded border">
+              {formData.initialSupply && parseFloat(formData.initialSupply) > 0 ? (
+                <>
+                  <div className="text-green-600">
+                    {parseFloat(formData.initialSupply).toLocaleString()} tokens
+                  </div>
+                  <div className="text-blue-600 text-xs mt-1">
+                    💡 These tokens will be minted to your address when the contract is deployed
+                  </div>
+                </>
+              ) : (
+                <span className="text-gray-400">Enter an initial supply to see calculation</span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="maxSupply" className="block text-sm font-medium text-gray-700 mb-2">
+            Max Supply *
+          </label>
+          <input
+            type="number"
+            id="maxSupply"
+            value={formData.maxSupply}
+            onChange={(e) => handleInputChange('maxSupply', e.target.value)}
+            className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${errors.maxSupply ? 'border-red-500' : ''}`}
+            placeholder="10000000"
+            min={formData.initialSupply ? Number(formData.initialSupply) : 1}
+            step="1"
+            disabled={isDeploying}
+          />
+          {errors.maxSupply && (
+            <p className="mt-1 text-sm text-red-600">{errors.maxSupply}</p>
+          )}
+          <p className="mt-2 text-sm text-gray-500">
+            Maximum total supply that can ever exist. You can mint additional tokens up to this limit using the mint() function.
+          </p>
+        </div>
+
+        <div>
+          <label htmlFor="logo" className="block text-sm font-medium text-gray-700 mb-2">
+            Token Logo URL
+          </label>
+          <input
+            type="url"
+            id="logo"
+            value={formData.logo}
+            onChange={(e) => handleInputChange('logo', e.target.value)}
+            className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${errors.logo ? 'border-red-500' : ''}`}
+            placeholder="https://example.com/logo.png"
+            disabled={isDeploying}
+          />
+          {errors.logo && (
+            <p className="mt-1 text-sm text-red-600">{errors.logo}</p>
+          )}
+          <p className="mt-1 text-sm text-gray-500">
+            Optional: Direct link to your token's logo image (PNG, JPG, SVG). This will be stored on-chain via the logoUrl() function.
+          </p>
+        </div>
+
+        <div>
+          <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+            Token Description
+          </label>
+          <textarea
+            id="description"
+            value={formData.description}
+            onChange={(e) => handleInputChange('description', e.target.value)}
+            className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${errors.description ? 'border-red-500' : ''}`}
+            placeholder="Describe your token's purpose, utility, or vision..."
+            rows={3}
+            disabled={isDeploying}
+          />
+          {errors.description && (
+            <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+          )}
+          <p className="mt-1 text-sm text-gray-500">
+            Optional: Help users understand what your token is for. This will be stored on-chain via the description() function.
+          </p>
         </div>
 
         <div className="pt-4">
           <button
-            type="submit"
+            onClick={handleSubmit}
             disabled={isDeploying}
-            className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed text-lg py-4"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-lg"
           >
             {isDeploying ? (
               <span className="flex items-center justify-center">
@@ -327,13 +329,16 @@ export default function TokenForm({ onDeploy, isDeploying }: TokenFormProps) {
           </button>
         </div>
 
-        <div className="p-4 bg-blue-50 rounded-lg">
-          <p className="text-sm text-blue-800">
-            <strong>Note:</strong> You'll need some SHM tokens in your wallet to pay for gas fees. 
-            Get testnet tokens from the <a href="https://docs.shardeum.org/docs/developer/faucet" target="_blank" rel="noopener noreferrer" className="underline">Shardeum Faucet</a>.
-          </p>
+        <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <h4 className="font-semibold text-yellow-800 mb-2">⚠️ Important Notes:</h4>
+          <ul className="text-sm text-yellow-700 space-y-1">
+            <li>• You'll need SHM tokens for gas fees - get them from the <a href="https://docs.shardeum.org/docs/developer/faucet" target="_blank" rel="noopener noreferrer" className="underline hover:text-yellow-900">Shardeum Faucet</a></li>
+            <li>• You'll be the owner and can mint additional tokens up to the max supply</li>
+            <li>• The contract uses ERC20Capped to enforce the maximum supply limit</li>
+            <li>• Logo URL and description are stored on-chain and publicly readable</li>
+          </ul>
         </div>
-      </form>
+      </div>
     </div>
   )
 }
