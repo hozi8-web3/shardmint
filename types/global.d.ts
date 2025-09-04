@@ -20,4 +20,5 @@ declare global {
       chainId?: string
     }
   }
+  declare module 'ethers'
 }

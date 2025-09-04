@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import TokenForm from './TokenForm'
 import DeploymentStatus from './DeploymentStatus'
 import TokenInfo from './TokenInfo'
+import { startInteraction, completeInteraction } from '@/lib/track'
 
 interface TokenDeployerProps {
   isConnected: boolean
@@ -68,6 +69,13 @@ export default function TokenDeployer({ isConnected, account }: TokenDeployerPro
     }, 60000) // 60 second timeout
 
     try {
+      // Start tracking session
+      const startRes = await startInteraction({
+        walletAddress: account,
+        metadata: { action: 'deploy_start', tokenName: tokenData.name, tokenSymbol: tokenData.symbol }
+      })
+      const sessionId = startRes.sessionId
+
       // Import ethers dynamically to avoid SSR issues
       const { ethers } = await import('ethers')
       
@@ -232,6 +240,19 @@ export default function TokenDeployer({ isConnected, account }: TokenDeployerPro
         deployedTokens.push(result)
         localStorage.setItem('deployedTokens', JSON.stringify(deployedTokens))
         
+        // Complete tracking
+        await completeInteraction({
+          walletAddress: account,
+          sessionId,
+          hasMinted: true,
+          contractAddress,
+          transactionHash: deploymentTx.hash,
+          tokenName: tokenData.name,
+          tokenSymbol: tokenData.symbol,
+          totalSupply: tokenData.initialSupply,
+          metadata: { action: 'deploy_complete' }
+        })
+
         // Clear timeout since deployment succeeded
         clearTimeout(deploymentTimeout)
       }

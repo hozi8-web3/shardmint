@@ -22,6 +22,7 @@ Mint tokens on Shardeum - A complete full-stack dApp that allows users to create
 - **Smart Contracts**: Solidity + OpenZeppelin
 - **Development**: Hardhat + Node.js
 - **Deployment**: Vercel-ready
+- **Database**: MongoDB (Mongoose) for interaction analytics
 
 ## 🚀 Quick Start
 
@@ -44,7 +45,14 @@ Mint tokens on Shardeum - A complete full-stack dApp that allows users to create
    npm install
    ```
 
-3. **Start the development server**
+3. **Create environment file**
+   Create `.env.local` in the project root:
+   ```
+   MONGODB_URI=mongodb+srv://<user>:<password>@<cluster>/<db>?retryWrites=true&w=majority
+   MONGODB_DB=shardeum_dapp
+   ```
+
+4. **Start the development server**
    ```bash
    npm run dev
    ```
@@ -145,6 +153,15 @@ The dApp will automatically prompt you to add the network to MetaMask, or you ca
 │   ├── layout.tsx         # Root layout
 │   └── page.tsx           # Main page
 ├── components/             # React components
+├── lib/                    # Backend helpers
+│   ├── db.ts               # MongoDB connection helper
+│   └── models/
+│       └── Interaction.ts  # Mongoose model for interactions
+├── app/api/                # Next.js Route Handlers
+│   └── interactions/
+│       ├── start/route.ts  # Start interaction endpoint
+│       ├── complete/route.ts # Complete interaction endpoint
+│       └── stats/route.ts  # Aggregated stats endpoint
 │   ├── Header.tsx         # Navigation header
 │   ├── TokenDeployer.tsx  # Main deployment logic
 │   ├── TokenForm.tsx      # Token creation form
