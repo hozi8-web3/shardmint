@@ -2,11 +2,11 @@
   <img src="public/logo-large.svg" alt="ShardMint Logo" width="200" />
 </p>
 
-Mint tokens on Shardeum - A complete full-stack dApp that allows users to create and deploy their own ERC-20 tokens on the **Shardeum Unstablenet** (Smart Contract Testnet) with just a few clicks!
+Mint tokens on Shardeum - A complete full-stack dApp that allows users to create and deploy their own ERC-20 tokens on the **Shardeum EVM Testnet** with just a few clicks!
 
 ## ✨ Features
 
-- **🔗 MetaMask Integration**: Seamless wallet connection and network switching
+- **🔗 WalletConnect + RainbowKit**: Seamless wallet connection and network switching
 - **🚀 One-Click Deployment**: Deploy ERC-20 tokens without writing any code
 - **📱 Modern UI**: Beautiful, responsive interface built with Tailwind CSS
 - **🔒 Secure**: Uses OpenZeppelin's battle-tested ERC-20 standard
@@ -18,7 +18,7 @@ Mint tokens on Shardeum - A complete full-stack dApp that allows users to create
 
 - **Frontend**: Next.js 14 + React 18 + TypeScript
 - **Styling**: Tailwind CSS
-- **Blockchain**: Ethers.js v6 + Web3
+- **Blockchain**: Ethers.js v6 + wagmi + viem
 - **Smart Contracts**: Solidity + OpenZeppelin
 - **Development**: Hardhat + Node.js
 - **Deployment**: Vercel-ready
@@ -79,20 +79,20 @@ Mint tokens on Shardeum - A complete full-stack dApp that allows users to create
 
 4. **Deploy to testnet**
    ```bash
-   npx hardhat run scripts/deploy.js --network shardeumUnstable
+   npx hardhat run scripts/deploy.js --network shardeumTestnet
    ```
 
 ## 🌐 Network Configuration
 
-### Shardeum Unstablenet
-- **Network Name**: Shardeum Unstablenet
-- **RPC URL**: `https://api-unstable.shardeum.org`
-- **Chain ID**: `8080`
+### Shardeum EVM Testnet
+- **Network Name**: Shardeum EVM Testnet
+- **RPC URL**: `https://api-mezame.shardeum.org`
+- **Chain ID**: `8119`
 - **Currency Symbol**: `SHM`
-- **Block Explorer**: `https://explorer-unstable.shardeum.org`
+- **Block Explorer**: `https://explorer-mezame.shardeum.org`
 
-### Adding to MetaMask
-The dApp will automatically prompt you to add the network to MetaMask, or you can add it manually:
+### Adding to Wallet
+The dApp uses RainbowKit and will guide you to switch/add the network, or you can add it manually:
 
 1. Open MetaMask
 2. Click "Add Network"
@@ -104,7 +104,7 @@ The dApp will automatically prompt you to add the network to MetaMask, or you ca
 ### 1. Connect Wallet
 - Click "Connect Wallet" button
 - Approve MetaMask connection
-- Ensure you're on Shardeum Unstablenet
+- Ensure you're on Shardeum EVM Testnet
 
 ### 2. Fill Token Details
 - **Token Name**: Your token's full name (e.g., "My Awesome Token")
@@ -186,9 +186,9 @@ The dApp will automatically prompt you to add the network to MetaMask, or you ca
 
 ### Testnet Testing
 1. Get testnet SHM from [Shardeum Faucet](https://docs.shardeum.org/docs/developer/faucet)
-2. Connect MetaMask to Shardeum Unstablenet
+2. Connect your wallet to Shardeum EVM Testnet
 3. Deploy test tokens
-4. Verify on [Shardeum Explorer](https://explorer-unstable.shardeum.org)
+4. Verify on [Shardeum Explorer](https://explorer-mezame.shardeum.org)
 
 ## 🔒 Security
 
@@ -206,7 +206,7 @@ The dApp will automatically prompt you to add the network to MetaMask, or you ca
    - Refresh the page
 
 2. **"Wrong network"**
-   - Switch to Shardeum Unstablenet (Chain ID: 8080)
+   - Switch to Shardeum EVM Testnet (Chain ID: 8119)
    - The dApp will prompt you to add the network
 
 3. **"Insufficient funds"**
@@ -222,7 +222,7 @@ The dApp will automatically prompt you to add the network to MetaMask, or you ca
    - **This is normal!** Custom ERC-20 tokens don't auto-appear in MetaMask
    - Use the "Add to MetaMask" button in the dApp after deployment
    - Or manually add: MetaMask → Import tokens → Paste contract address
-   - Verify you're on the correct network (Shardeum Unstablenet)
+   - Verify you're on the correct network (Shardeum EVM Testnet)
 
 6. **"Token shows extremely large numbers in wallet"**
    - **This is normal!** You're seeing wei units, not token amounts

@@ -1,14 +1,18 @@
-API ROUTES (minimal)
-
-BASE (local)
-http://localhost:3000
+API ROUTES
 
 GET
-/api/interactions/stats?limit=20&skip=0&mintedOnly=true
-/api/interactions/by-wallet?wallet=0x...&page=1&pageSize=20
-/api/interactions/list?page=1&pageSize=20&mintedOnly=false&wallet=0x...
-/api/interactions/wallet/summary?wallet=0x...
+/api/interactions/stats
+/api/interactions/by-wallet?wallet=0xYourWallet&page=1&pageSize=20
+/api/interactions/list?wallet=0xYourWallet&mintedOnly=true&page=1&pageSize=20
+/api/interactions/wallet/summary?wallet=0xYourWallet
 
 POST
 /api/interactions/start
 /api/interactions/complete
+
+EXAMPLE
+curl -X POST http://localhost:3000/api/interactions/start \
+  -H "Content-Type: application/json" \
+  -d '{"walletAddress":"0xYourWallet","sessionId":"session-1"}'
+
+curl "http://localhost:3000/api/interactions/by-wallet?wallet=0xYourWallet&page=1&pageSize=20"

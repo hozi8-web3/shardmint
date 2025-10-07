@@ -287,7 +287,7 @@ export default function TokenDeployer({ isConnected, account }: TokenDeployerPro
           </p>
           <div className="p-4 bg-blue-50 rounded-lg">
             <p className="text-sm text-blue-800">
-              <strong>Network:</strong> Shardeum Unstablenet (Chain ID: 8080)
+              <strong>Network:</strong> Shardeum EVM Testnet (Chain ID: 8119)
             </p>
           </div>
         </div>

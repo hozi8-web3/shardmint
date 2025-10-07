@@ -8,7 +8,7 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">ShardMint</h3>
             <p className="text-gray-600 text-sm">
-              Mint tokens on Shardeum - The easiest way to create and deploy ERC-20 tokens on Shardeum Unstablenet. 
+              Mint tokens on Shardeum - The easiest way to create and deploy ERC-20 tokens on Shardeum EVM Testnet. 
               No coding required, just fill in the details and deploy!
             </p>
           </div>
@@ -28,7 +28,7 @@ export default function Footer() {
               </li>
               <li>
                 <a 
-                  href="https://explorer-unstable.shardeum.org" 
+                  href="https://explorer-mezame.shardeum.org" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-primary-600 hover:text-primary-700 transition-colors"
@@ -52,9 +52,9 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Network Info</h3>
             <div className="text-sm text-gray-600 space-y-1">
-              <p><strong>Network:</strong> Shardeum Unstablenet</p>
-              <p><strong>Chain ID:</strong> 8080</p>
-              <p><strong>RPC URL:</strong> api-unstable.shardeum.org</p>
+              <p><strong>Network:</strong> Shardeum EVM Testnet</p>
+              <p><strong>Chain ID:</strong> 8119</p>
+              <p><strong>RPC URL:</strong> api-mezame.shardeum.org</p>
               <p><strong>Currency:</strong> SHM</p>
               <p><strong>Token Format:</strong> Uses ethers.parseUnits() for accurate decimal handling</p>
             </div>

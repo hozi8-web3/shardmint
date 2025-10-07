@@ -71,8 +71,8 @@ export default function TokenInfo({ result, onDeployAnother }: TokenInfoProps) {
   const remainingMintable = parseInt(tokenData.maxSupply) - parseInt(currentTotalSupply)
   const canMint = remainingMintable > 0
   
-  const explorerUrl = `https://explorer-unstable.shardeum.org/address/${contractAddress}`
-  const txUrl = `https://explorer-unstable.shardeum.org/tx/${transactionHash}`
+  const explorerUrl = `https://explorer-mezame.shardeum.org/address/${contractAddress}`
+  const txUrl = `https://explorer-mezame.shardeum.org/tx/${transactionHash}`
 
   const copyToClipboard = (text: string, type: string) => {
     navigator.clipboard.writeText(text)
@@ -163,16 +163,16 @@ export default function TokenInfo({ result, onDeployAnother }: TokenInfoProps) {
           throw new Error('Invalid token parameters')
         }
         
-        // Check if user is on the correct network (Shardeum Unstablenet)
+        // Check if user is on the correct network (Shardeum EVM Testnet)
         const chainId = await window.ethereum.request({ method: 'eth_chainId' })
-        if (chainId !== '0x1f90') { // 8080 in hex
+        if (chainId !== '0x1fb7') { // 8119 in hex
           // Try to switch to the correct network first
           try {
             await window.ethereum.request({
               method: 'wallet_switchEthereumChain',
-              params: [{ chainId: '0x1f90' }]
+              params: [{ chainId: '0x1fb7' }]
             })
-            console.log('Successfully switched to Shardeum Unstablenet')
+            console.log('Successfully switched to Shardeum EVM Testnet')
           } catch (switchError: any) {
             if (switchError.code === 4902) {
               // Chain not added, try to add it
@@ -180,26 +180,26 @@ export default function TokenInfo({ result, onDeployAnother }: TokenInfoProps) {
                 await window.ethereum.request({
                   method: 'wallet_addEthereumChain',
                   params: [{
-                    chainId: '0x1f90',
-                    chainName: 'Shardeum Unstablenet',
+                    chainId: '0x1fb7',
+                    chainName: 'Shardeum EVM Testnet',
                     nativeCurrency: {
                       name: 'SHM',
                       symbol: 'SHM',
                       decimals: 18
                     },
-                    rpcUrls: ['https://api-unstable.shardeum.org'],
-                    blockExplorerUrls: ['https://explorer-unstable.shardeum.org']
+                    rpcUrls: ['https://api-mezame.shardeum.org'],
+                    blockExplorerUrls: ['https://explorer-mezame.shardeum.org']
                   }]
                 })
-                console.log('Successfully added Shardeum Unstablenet')
+                console.log('Successfully added Shardeum EVM Testnet')
               } catch (addError: any) {
                 console.error('Failed to add network:', addError)
-                alert('⚠️ Please manually switch to Shardeum Unstablenet (Chain ID: 8080) before adding the token to MetaMask.')
+                alert('⚠️ Please manually switch to Shardeum EVM Testnet (Chain ID: 8119) before adding the token to MetaMask.')
                 return
               }
             } else {
               console.error('Failed to switch network:', switchError)
-              alert('⚠️ Please manually switch to Shardeum Unstablenet (Chain ID: 8080) before adding the token to MetaMask.')
+              alert('⚠️ Please manually switch to Shardeum EVM Testnet (Chain ID: 8119) before adding the token to MetaMask.')
               return
             }
           }
@@ -300,7 +300,7 @@ export default function TokenInfo({ result, onDeployAnother }: TokenInfoProps) {
         errorMessage += 'Address: ' + address + '\n'
         errorMessage += 'Symbol: ' + symbol + '\n'
         errorMessage += 'Decimals: ' + decimals + '\n'
-        errorMessage += 'Network: Shardeum Unstablenet (Chain ID: 8080)'
+        errorMessage += 'Network: Shardeum EVM Testnet (Chain ID: 8119)'
         
         alert(errorMessage)
       }
@@ -318,7 +318,7 @@ export default function TokenInfo({ result, onDeployAnother }: TokenInfoProps) {
           Token Deployed Successfully!
         </h2>
         <p className="text-gray-600">
-          Your ERC-20 token has been deployed to the Shardeum Unstablenet
+          Your ERC-20 token has been deployed to the Shardeum EVM Testnet
         </p>
       </div>
 

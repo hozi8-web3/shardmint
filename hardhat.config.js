@@ -17,9 +17,9 @@ module.exports = {
     hardhat: {
       chainId: 1337,
     },
-    shardeumUnstable: {
-      url: "https://api-unstable.shardeum.org",
-      chainId: 8080,
+    shardeumTestnet: {
+      url: "https://api-mezame.shardeum.org",
+      chainId: 8119,
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       gasPrice: "auto",
       gas: "auto",

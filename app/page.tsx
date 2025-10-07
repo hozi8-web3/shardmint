@@ -1,14 +1,15 @@
-'use client'
+"use client"
 
 import { useState, useEffect } from 'react'
+import { useAccount } from 'wagmi'
 import TokenDeployer from '../components/TokenDeployer'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import DeploymentHistory from '../components/DeploymentHistory'
 
 export default function Home() {
-  const [isConnected, setIsConnected] = useState(false)
-  const [account, setAccount] = useState('')
+  const { isConnected, address } = useAccount()
+  const account = address || ''
   const [activeTab, setActiveTab] = useState<'deploy' | 'mint'>('deploy')
   const [deployedTokens, setDeployedTokens] = useState<any[]>([])
   const [selectedToken, setSelectedToken] = useState<any>(null)
@@ -33,28 +34,10 @@ export default function Home() {
   const [tokenProcessingProgress, setTokenProcessingProgress] = useState({ current: 0, total: 0, found: 0 })
 
   useEffect(() => {
-    checkWalletConnection()
-  }, [])
-
-  useEffect(() => {
     if (isConnected && account) {
       loadDeployedTokensSmart()
     }
   }, [isConnected, account])
-
-  const checkWalletConnection = async () => {
-    if (typeof window !== 'undefined' && window.ethereum) {
-      try {
-        const accounts = await window.ethereum.request({ method: 'eth_accounts' })
-        if (accounts.length > 0) {
-          setIsConnected(true)
-          setAccount(accounts[0])
-        }
-      } catch (error) {
-        console.error('Error checking wallet connection:', error)
-      }
-    }
-  }
 
   // Smart token discovery using transaction history and targeted scanning
   const loadDeployedTokensSmart = async () => {
@@ -727,11 +710,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Header 
-        isConnected={isConnected} 
-        account={account}
-        onConnect={checkWalletConnection}
-      />
+      <Header />
       
       <main className="flex-1 container mx-auto px-4 py-8" style={{ flex: 1, maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
         <div className="text-center mb-12" style={{ textAlign: 'center', marginBottom: '3rem' }}>
@@ -740,7 +719,7 @@ export default function Home() {
           </div>
           
           <p className="text-xl text-gray-600 max-w-2xl mx-auto" style={{ fontSize: '1.25rem', color: '#4b5563', maxWidth: '42rem', margin: '0 auto' }}>
-            Mint tokens on Shardeum - Create and deploy your own ERC-20 token on Shardeum Unstablenet in minutes. 
+            Mint tokens on Shardeum - Create and deploy your own ERC-20 token on Shardeum EVM Testnet in minutes. 
             No coding required - just fill in the details and deploy!
           </p>
         </div>
@@ -792,7 +771,7 @@ export default function Home() {
                 </p>
                 <div className="p-4 bg-blue-50 rounded-lg">
                   <p className="text-sm text-blue-800">
-                    <strong>Network:</strong> Shardeum Unstablenet (Chain ID: 8080)
+                    <strong>Network:</strong> Shardeum EVM Testnet (Chain ID: 8119)
                   </p>
                 </div>
               </div>
